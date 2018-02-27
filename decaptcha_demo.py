@@ -13,6 +13,26 @@ class captcha:
     def loadfile(fpath):
         with open(fpath,'rb') as f:
             return f.read()
+
+    @staticmethod
+    def denoise(b, width, height):
+        d = ''
+        for y in xrange(height):
+            for x in xrange(width):
+                z = y * width + x
+                if b[z]=='\0':
+                    d += b[z]
+                    continue
+                if x==0 or x==width-1 or y==0 or y==height-1:
+                    d += b[z]
+                    continue
+                n = ord(b[z-width-1])+ord(b[z-width])+ord(b[z-width+1])+ord(b[z-1])+ord(b[z+1])+ord(b[z+width-1])+ord(b[z+width])+ord(b[z+width+1])
+                
+                if n==0:
+                    d += '\0'
+                else:
+                    d += b[z]
+        return d
     
     @staticmethod
     def decaptch(imgdata, extract):
@@ -24,6 +44,7 @@ class captcha:
             pixdata = img.load()
             (width,height) = img.size
             bitmap = extract.extract(pixdata, width, height)
+            #bitmap = captcha.denoise(bitmap, width, height)
             dc = Decaptcha(gTessDataPath,'eng')
             dc.SetCharList(extract.charlist)
             ostr = dc.Recognize(bitmap, 1, width, extract.x1, extract.y1, extract.x2, extract.y2)
@@ -34,7 +55,7 @@ class captcha:
         return ostr.strip()
     
 class Examples:
-    ''' demo aa '''
+    ''' demo aa '''  
     def faa(self, fpath):
         class extract:
             def __init__(self):
@@ -90,7 +111,7 @@ class Examples:
     def fcc(self, fpath):
         class extract:
             def __init__(self):
-                self.x1,self.y1,self.x2,self.y2 = 20,0,88,26
+                self.x1,self.y1,self.x2,self.y2 = 20,0,92,26
                 self.charlist = '0123456789'
                 
             def extract(self, pixdata, width, height):
@@ -99,7 +120,7 @@ class Examples:
                     sys.stdout.write('\n')
                     sys.stdout.write('%02x:' % (y))
                     for x in xrange(width):
-                        if x<=20 or x>88 or y==0 or y>=26 or pixdata[x,y]==(0xff,0xff,0xff,0xff):
+                        if x<=20 or x>92 or y==0 or y>=26 or pixdata[x,y]==(0xff,0xff,0xff,0xff):
                             bitmap+='\0'
                             sys.stdout.write(' ')
                             continue
@@ -229,7 +250,7 @@ class Examples:
 def main():
     if len(sys.argv)<=1:
         print 'Usage: python %s ftype fpath'
-        print '       ftypes: faa,fbb,fcc,fdd'
+        print '       ftypes: aa,bb,cc,dd,ee'
         return
     
     ftype = sys.argv[1]
@@ -246,6 +267,6 @@ def main():
         example.fdd(fpath)
     elif ftype=='ee':
         example.fee(fpath)
-    
+  
 if __name__=='__main__':
     main()
