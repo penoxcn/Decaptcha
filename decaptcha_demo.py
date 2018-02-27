@@ -111,7 +111,7 @@ class Examples:
     def fcc(self, fpath):
         class extract:
             def __init__(self):
-                self.x1,self.y1,self.x2,self.y2 = 20,0,92,26
+                self.x1,self.y1,self.x2,self.y2 = 20,0,94,26
                 self.charlist = '0123456789'
                 
             def extract(self, pixdata, width, height):
@@ -120,7 +120,7 @@ class Examples:
                     sys.stdout.write('\n')
                     sys.stdout.write('%02x:' % (y))
                     for x in xrange(width):
-                        if x<=20 or x>92 or y==0 or y>=26 or pixdata[x,y]==(0xff,0xff,0xff,0xff):
+                        if x<=20 or x>94 or y==0 or y>=26 or pixdata[x,y]==(0xff,0xff,0xff,0xff):
                             bitmap+='\0'
                             sys.stdout.write(' ')
                             continue
